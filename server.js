@@ -55,6 +55,16 @@ myDB(async client => {
       });
     }
   ));
+
+  const ensureAuthenticated = (req, res, next) => {
+
+    if (req.isAuthenticated()) {
+      return next();
+    }
+
+    res.redirect('/');
+
+  }
   
   app.route('/').get((req, res) => {
     res.render('pug/index', {
@@ -70,12 +80,8 @@ myDB(async client => {
       res.redirect('/profile')
   });
 
-  app.route('/profile').get((req, res) => {
-    res.render('pug/profile', {
-      title: 'Connected to Database', 
-      message: 'Please login',
-      showLogin: true
-    });
+  app.route('/profile').get(ensureAuthenticated, (req, res) => {
+    res.render('pug/profile');
   });
 
 }).catch(err => {
