@@ -6,6 +6,7 @@ const passport = require('passport');
 const ObjectID = require('mongodb').ObjectID;
 const myDB = require('./connection');
 const LocalStrategy = require('passport-local');
+const bcrypt = require('bcrypt');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 
 const app = express();
@@ -60,7 +61,14 @@ myDB(async client => {
         
         if (err) return done(err);
         if (!user) return done(null, false);
-        if (password != user.password) return done(null, false);
+        
+        // passwords are stored after being hashed
+        // so when checking if entered password is
+        // the same as the stored password
+        // need hash the entered password and then compare
+        // to the alreaday hashed and stored password.
+        if (!bcrypt.compareSync(password, user.password)) return done(null, false);
+        
         return done(null, user);
       });
     }
@@ -103,9 +111,13 @@ myDB(async client => {
       }
       // if user does not exist create the user
       else {
+
+        // hash user's entered password before storing in database.
+        const hashedPassword = bcrypt.hashSync(req.body.password, 12);
+
         myDataBase.insertOne({
           username: req.body.username,
-          password: req.body.password
+          password: hashedPassword
         }, (err, doc) => {
 
           if (err) {
@@ -132,7 +144,7 @@ myDB(async client => {
   (req, res, next) => {
     res.redirect('/profile');
   });
-  
+
   app.use((req, res, next) => {
     res.status(404)
       .type('text')
