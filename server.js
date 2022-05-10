@@ -33,13 +33,6 @@ app.set('view engine', 'pug');
 myDB(async client => {
   const myDataBase = await client.db('advNodeExpress').collection('users');
 
-  app.route('/').get((req, res) => {
-    res.render('pug/index', {
-      title: 'Connected to Database', 
-      message: 'Please login'
-    });
-  });
-
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
@@ -62,6 +55,28 @@ myDB(async client => {
       });
     }
   ));
+  
+  app.route('/').get((req, res) => {
+    res.render('pug/index', {
+      title: 'Connected to Database', 
+      message: 'Please login',
+      showLogin: true
+    });
+  });
+
+  app.route('/login').post(
+    passport.authenticate('local', { failureRedirect: '/' }), 
+    (req, res) => {
+      res.redirect('/profile')
+  });
+
+  app.route('/profile').get((req, res) => {
+    res.render('pug/profile', {
+      title: 'Connected to Database', 
+      message: 'Please login',
+      showLogin: true
+    });
+  });
 
 }).catch(err => {
   app.route('/').get((req, res) => {
