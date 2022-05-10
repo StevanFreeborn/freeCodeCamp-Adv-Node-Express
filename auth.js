@@ -1,6 +1,9 @@
+require('dotenv').config();
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const ObjectID = require('mongodb').ObjectID;
+const GitHubStrategy = require('passport-github');
+
 
 module.exports = function (app, myDataBase) {
 
@@ -32,6 +35,16 @@ module.exports = function (app, myDataBase) {
                 return done(null, user);
             });
         }
+    ));
+
+    passport.use(new GitHubStrategy({
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: 'https://freecodecampadvnodeexpress.herokuapp.com/auth/github/callback'
+    },
+    (accessToken, refreshToken, profile, cb) => {
+        console.log(profile);
+    }
     ));
 
 }
