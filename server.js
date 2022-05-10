@@ -30,6 +30,16 @@ app.use(passport.session());
 
 app.set('view engine', 'pug');
 
+const ensureAuthenticated = (req, res, next) => {
+
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  res.redirect('/');
+
+}
+
 myDB(async client => {
   const myDataBase = await client.db('advNodeExpress').collection('users');
 
@@ -55,16 +65,6 @@ myDB(async client => {
       });
     }
   ));
-
-  const ensureAuthenticated = (req, res, next) => {
-
-    if (req.isAuthenticated()) {
-      return next();
-    }
-
-    res.redirect('/');
-
-  }
   
   app.route('/').get((req, res) => {
     res.render('pug/index', {
