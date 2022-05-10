@@ -44,6 +44,43 @@ module.exports = function (app, myDataBase) {
     },
     (accessToken, refreshToken, profile, cb) => {
         console.log(profile);
+        myDataBase.findOneAndUpdate(
+            // filter to locate user based on id value
+            {id: profile.id},
+            {
+                // if operation results in document being created
+                // set these fields in the new document
+                $setOnInsert: {
+                    id: profile.id,
+                    name: profile.displayName || 'John Doe',
+                    photo: profile.photos[0].value || '',
+                    email: Array.isArray(profile.emails) ?
+                    profile.emails[0].value :
+                    'No public email',
+                    created_on: new Date(),
+                    provider: profile.provider || ''
+                },
+                // document created or updated will
+                // have last_login set to current date
+                $set: {
+                    last_login: new Date()
+                },
+                // document created or updated will
+                // have login_count incremented
+                $inc: {
+                    login_count: 1
+                }
+            },
+            // create a new document if no document matches the filter
+            // or update a single document that matches filter.
+            // if update of a single document occurs will will
+            // return the updated version of that document not the
+            // original version
+            { upsert: true, new: true},
+            (err, doc) => {
+                return cb(null, doc.value);
+            }
+        );
     }
     ));
 
