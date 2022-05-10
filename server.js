@@ -70,7 +70,8 @@ myDB(async client => {
     res.render('pug/index', {
       title: 'Connected to Database', 
       message: 'Please login',
-      showLogin: true
+      showLogin: true,
+      showRegistration: true
     });
   });
 
@@ -89,6 +90,49 @@ myDB(async client => {
     res.redirect('/');
   });
 
+  app.route('/register').post((req, res, next) => {
+
+    // see if user already exists
+    myDataBase.findOne({ username: req.body.username }, (err, user) => {
+      if (err) {
+        next(err);
+      }
+      // if user already exists redirect to index
+      else if (user) {
+        res.redirect('/');
+      }
+      // if user does not exist create the user
+      else {
+        myDataBase.insertOne({
+          username: req.body.username,
+          password: req.body.password
+        }, (err, doc) => {
+
+          if (err) {
+            res.redirect('/');
+          }
+          // if user created successfully get
+          // user from the ops array on the
+          // result object. See http://mongodb.github.io/node-mongodb-native/3.6/api/Collection.html#%7EinsertOneWriteOpResult.
+          else {
+            next(null, doc.ops[0]);
+          }
+
+        });
+
+      }
+
+    });
+
+  },
+  // attempt to authenticate user
+  // if authentication fails redirect to index
+  // if authentication succeds redirect to profile
+  passport.authenticate('local', { failureRedirect: '/' }),
+  (req, res, next) => {
+    res.redirect('/profile');
+  });
+  
   app.use((req, res, next) => {
     res.status(404)
       .type('text')
