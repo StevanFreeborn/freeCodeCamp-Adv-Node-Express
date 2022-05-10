@@ -24,7 +24,9 @@ const store = new MongoDBStore({
   uri: process.env.MONGO_URI,
   databaseName: 'advNodeExpress',
   collection: 'sessions'
-}, err => console.log(err));
+}, err => {
+  if (err) console.log(err)
+});
 
 store.on('error', err => console.log(err));
 
