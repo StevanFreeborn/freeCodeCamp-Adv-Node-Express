@@ -2,11 +2,13 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 const passport = require('passport');
 const myDB = require('./connection');
 const routes = require('./routes');
 const auth = require('./auth');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
+const { Sessions } = require('mongodb/lib/core');
 
 const app = express();
 
@@ -18,11 +20,20 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
+const store = new MongoDBStore({
+  uri: process.env.MONGO_URI,
+  databaseName: 'advNodeExpress',
+  collection: 'sessions'
+}, err => console.log(err));
+
+store.on('error', err => console.log(err));
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: true,
   saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: { secure: false },
+  store: store
 }));
 
 app.use(passport.initialize());
