@@ -9,7 +9,7 @@ $(document).ready(function () {
     return false; // prevent form submit from refreshing page
   });
 
-  let socket = io('https://freecodecampadvnodeexpress.herokuapp.com');
+  let socket = io('https://freecodecampadvnodeexpress.herokuapp.com:3000');
 
   socket.on('user count', (data) => {
     console.log(data);
