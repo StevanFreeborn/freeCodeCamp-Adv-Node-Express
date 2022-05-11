@@ -8,7 +8,8 @@ const myDB = require('./connection');
 const routes = require('./routes');
 const auth = require('./auth');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
-const { Sessions } = require('mongodb/lib/core');
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
 const app = express();
 
@@ -45,7 +46,11 @@ app.set('view engine', 'pug');
 
 myDB(async client => {
   const myDataBase = await client.db('advNodeExpress').collection('users');
-  
+
+  io.on('connection', socket => {
+    console.log('A user has connected');
+  });
+
   auth(app, myDataBase);
   routes(app,myDataBase);
 
