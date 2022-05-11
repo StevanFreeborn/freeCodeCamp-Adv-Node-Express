@@ -48,16 +48,16 @@ app.set('view engine', 'pug');
 myDB(async client => {
   const myDataBase = await client.db('advNodeExpress').collection('users');
 
+  auth(app, myDataBase);
+  routes(app,myDataBase);
+
   let currentUsers = 0;
 
   io.on('connection', socket => {
     console.log('A user has connected');
-    currentUsers++;
+    ++currentUsers;
     io.emit('user count', currentUsers);
   });
-
-  auth(app, myDataBase);
-  routes(app,myDataBase);
 
 }).catch(err => {
   app.route('/').get((req, res) => {
@@ -66,6 +66,6 @@ myDB(async client => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log('Listening on port ' + PORT);
 });
