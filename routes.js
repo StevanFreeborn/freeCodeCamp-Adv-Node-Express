@@ -57,6 +57,7 @@ module.exports = function (app, myDataBase) {
                 const hashedPassword = bcrypt.hashSync(req.body.password, 12);
 
                 myDataBase.insertOne({
+                    name: req.body.name,
                     username: req.body.username,
                     password: hashedPassword
                 }, (err, doc) => {

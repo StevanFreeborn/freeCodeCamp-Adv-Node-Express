@@ -11,8 +11,16 @@ $(document).ready(function () {
 
   let socket = io();
 
-  socket.on('user count', (data) => {
-    console.log(data);
+  socket.on('user', (data) => {
+    $('#num-users').text(`${data.currentUsers} users online`);
+    
+    let message = (data.connected) ?
+    'has joined the chat.' :
+    'has left the chat.';
+
+    message = `${data.name} ${(message)}`;
+
+    $('#messages').append($('<li>').html(`<br> ${message} </br>`));
   });
 
 });

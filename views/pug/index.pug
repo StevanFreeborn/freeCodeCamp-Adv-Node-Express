@@ -32,6 +32,9 @@ html
       hr
       h2.center Registration Form
       form(action='/register', method='post').center
+        div 
+          label Name: 
+          input(type='text', name='name')
         div
           label Username:
           input(type='text', name='username')
