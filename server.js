@@ -100,6 +100,15 @@ myDB(async client => {
 
     });
 
+    socket.on('chat message', (message) => {
+
+      io.emit('chat message', {
+        name: socket.request.user.name,
+        message
+      });
+
+    });
+
   });
 
 }).catch(err => {
