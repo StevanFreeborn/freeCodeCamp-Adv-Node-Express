@@ -8,10 +8,11 @@ const myDB = require('./connection');
 const routes = require('./routes');
 const auth = require('./auth');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
 
 const app = express();
+
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
 fccTesting(app); 
 
