@@ -1,3 +1,5 @@
-# Advanced Node and Express
+# freeCodeCamp-Adv-Node-Express
 
-This is the boilerplate for the Advanced Node and Express lessons. Instructions for the lessons start at https://www.freecodecamp.org/learn/quality-assurance/advanced-node-and-express/
+A project used to complete the first part of the freeCodeCamp Quality Assurance certification.
+
+https://freecodecampadvnodeexpress.herokuapp.com/
